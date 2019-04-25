@@ -21,7 +21,7 @@ var (
 	}
 
 	testNetChainConf = &ChainConfig{
-		Block3_0_10: 10000000,
+		Block3_0_10: 9350000,
 		Block3_1_0:  10600000,
 	}
 
