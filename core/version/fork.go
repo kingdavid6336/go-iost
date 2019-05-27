@@ -17,9 +17,9 @@ type ChainConfig struct {
 
 var (
 	mainNetChainConf = &ChainConfig{
-		Block3_0_10: 12000000,
-		Block3_1_0:  15800000,
-		Block3_2_0:  18000000,
+		Block3_0_10: 0,
+		Block3_1_0:  0,
+		Block3_2_0:  0,
 	}
 
 	testNetChainConf = &ChainConfig{
