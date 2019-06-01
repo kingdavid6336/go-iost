@@ -553,24 +553,30 @@ func (bc *BlockCacheImpl) updatePending(h *BlockCacheNode) error {
 func (bc *BlockCacheImpl) Add(blk *block.Block) *BlockCacheNode {
 	newNode, nok := bc.hmget(blk.HeadHash())
 	if nok {
+		ilog.Infof("[BC.Add]: find blk in hmget, num = %v, hash = %v", blk.Head.Number, common.Base58Encode(blk.HeadHash()))
 		return newNode
 	}
 	parent, ok := bc.hmget(blk.Head.ParentHash)
 	if !ok {
 		parent, ok = bc.singleRoot[string(blk.Head.ParentHash)]
 		if !ok {
+			ilog.Infof("[BC.Add]: parent not found, new single, num = %v, hash = %v", blk.Head.Number, common.Base58Encode(blk.HeadHash()))
 			parent = NewBCN(nil, nil)
 			bc.singleRoot[string(blk.Head.ParentHash)] = parent
+		} else {
+			ilog.Infof("[BC.Add]: find parent in single, num = %v, hash = %v", blk.Head.Number, common.Base58Encode(blk.HeadHash()))
 		}
 	}
 	newNode, ok = bc.singleRoot[string(blk.HeadHash())]
 	if ok {
+		ilog.Infof("[BC.Add]: find blk in single, num = %v, hash = %v", blk.Head.Number, common.Base58Encode(blk.HeadHash()))
 		delete(bc.singleRoot, string(blk.HeadHash()))
 		// updateVirtualBCN
 		newNode.Block = blk
 		newNode.SetParent(parent)
 		parent.addChild(newNode)
 	} else {
+		ilog.Infof("[BC.Add]: blk not found, num = %v, hash = %v", blk.Head.Number, common.Base58Encode(blk.HeadHash()))
 		newNode = NewBCN(parent, blk)
 	}
 	bc.hmset(blk.HeadHash(), newNode)

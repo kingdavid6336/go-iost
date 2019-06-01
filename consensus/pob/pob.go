@@ -99,6 +99,11 @@ func (p *PoB) Stop() {
 }
 
 func (p *PoB) doVerifyBlock(blk *block.Block) {
+	defer func() {
+		if r := recover(); r != nil {
+			ilog.Fatalf("panic in doVerifyBlock: %v", r)
+		}
+	}()
 	now := time.Now().UnixNano()
 	receiveBlockDelayTimeGauge.Set(float64(now-blk.Head.Time), nil)
 	defer func() {
@@ -138,6 +143,11 @@ func (p *PoB) verifyLoop() {
 }
 
 func (p *PoB) doGenerateBlock(slot int64) {
+	defer func() {
+		if r := recover(); r != nil {
+			ilog.Fatalf("panic in doGenerateBlock: %v", r)
+		}
+	}()
 	// When the iserver is catching up, the generate block is not performed.
 	if p.sync.IsCatchingUp() {
 		return
