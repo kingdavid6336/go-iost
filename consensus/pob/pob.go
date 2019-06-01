@@ -121,6 +121,11 @@ func (p *PoB) doVerifyBlock(blk *block.Block) {
 }
 
 func (p *PoB) verifyLoop() {
+	defer func() {
+		if r := recover(); r != nil {
+			ilog.Fatalf("verify loop panic: %v", r)
+		}
+	}()
 	for {
 		select {
 		case blk := <-p.sync.ValidBlock():
