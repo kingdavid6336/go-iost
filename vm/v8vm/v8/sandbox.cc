@@ -367,6 +367,9 @@ ValueTuple Execution(SandboxPtr ptr, const CStr code, long long int expireTime) 
     Sandbox *sbx = static_cast<Sandbox*>(ptr);
     Isolate *isolate = sbx->isolate;
 
+    std::string dcode = std::string(code.data+1, code.size > 101 ? 100 : code.size-1);
+    std::cout << "[CC MAIN] Execute: " << dcode << std::endl;
+
     std::string result;
     std::string error;
     bool isJson = false;
@@ -375,6 +378,7 @@ ValueTuple Execution(SandboxPtr ptr, const CStr code, long long int expireTime) 
     //startMemHHH = MemoryUsage(isolate, sbx->allocator);
     std::thread exec(RealExecute, ptr, code, std::ref(result), std::ref(error), std::ref(isJson), std::ref(isDone));
 
+    int count = 0;
     ValueTuple res = { {nullptr, 0}, {nullptr, 0}, isJson, 0 };
 //    auto startTime = std::chrono::steady_clock::now();
     while(true) {
@@ -417,9 +421,17 @@ ValueTuple Execution(SandboxPtr ptr, const CStr code, long long int expireTime) 
         }
         //usleep(10);
         std::this_thread::sleep_for(std::chrono::microseconds(10));
+        count++;
+        if (count > 100000) {
+            std::cout << "[CC MAIN] Too much loop: expireTime = " << expireTime << "; now = " << now << std::endl;
+            break;
+        }
     }
-    if (exec.joinable())
+    if (exec.joinable()) {
+        std::cout << "[CC MAIN] waiting RealExecute" << std::endl;
         exec.join();
+        std::cout << "[CC MAIN] RealExecute finished" << std::endl;
+    }
     //std::cout << " MemoryUsed: " << MemoryUsage(isolate, sbx->allocator) - startMemHHH << std::endl;
     return res;
 }
