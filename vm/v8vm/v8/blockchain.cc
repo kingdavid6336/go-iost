@@ -28,6 +28,7 @@ void InitGoBlockchain(rulesFunc rules, blockInfoFunc blkInfo,
 
 char* IOSTBlockchain::Rules(CStr *result) {
     char* ret = CRules(sbxPtr, result);
+    SysLog(sbxPtr, "Info", "[CC RUNTIME] get rules");
     return ret;
 }
 
@@ -58,6 +59,7 @@ char* IOSTBlockchain::ContextInfo(CStr *result) {
 
     Sandbox *sbx = static_cast<Sandbox*>(sbxPtr);
     sbx->gasUsed += gasUsed;
+    SysLog(sbxPtr, "Info", "[CC RUNTIME] get context info");
     return ret;
 }
 
@@ -81,10 +83,12 @@ char* IOSTBlockchain::CallWithAuth(const CStr contract, const CStr api, const CS
 
 char* IOSTBlockchain::RequireAuth(const CStr accountID, const CStr permission, bool *result) {
     size_t gasUsed = 0;
+    SysLog(sbxPtr, "Info", "[CC RUNTIME] RequireAuth start");
     char* ret = CRequireAuth(sbxPtr, accountID, permission, result, &gasUsed);
 
     Sandbox *sbx = static_cast<Sandbox*>(sbxPtr);
     sbx->gasUsed += gasUsed;
+    SysLog(sbxPtr, "Info", "[CC RUNTIME] RequireAuth end");
     return ret;
 }
 

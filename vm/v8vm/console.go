@@ -6,7 +6,10 @@ package v8
 import "C"
 import (
 	"errors"
+	"fmt"
 	"reflect"
+
+	"github.com/iost-official/go-iost/ilog"
 )
 
 // Error message
@@ -36,6 +39,37 @@ func goConsoleLog(cSbx C.SandboxPtr, logLevel, logDetail C.CStr) *C.char {
 	}
 
 	loggerVal := reflect.ValueOf(sbx.host.Logger())
+	loggerFunc := loggerVal.MethodByName(levelStr)
+
+	if _, ok := validLogLevelMap[levelStr]; !ok {
+		return C.CString(ErrConsoleInvalidLogLevel.Error())
+	}
+
+	if !loggerFunc.IsValid() {
+		return C.CString(ErrConsoleInvalidLogLevel.Error())
+	}
+
+	loggerFunc.Call([]reflect.Value{
+		reflect.ValueOf(detailStr),
+	})
+
+	return nil
+}
+
+//export goSysLog
+func goSysLog(cSbx C.SandboxPtr, logLevel, logDetail C.CStr) *C.char {
+	sbx, ok := GetSandbox(cSbx)
+	if !ok {
+		return C.CString(ErrGetSandbox.Error())
+	}
+
+	bn := sbx.host.Context().Value("number")
+	txHash := sbx.host.Context().Value("tx_hash")
+
+	levelStr := logLevel.GoString()
+	detailStr := fmt.Sprintf(`num:%v, tx_hash:%s, msg:%s`, bn, txHash, logDetail.GoString())
+
+	loggerVal := reflect.ValueOf(ilog.DefaultLogger())
 	loggerFunc := loggerVal.MethodByName(levelStr)
 
 	if _, ok := validLogLevelMap[levelStr]; !ok {

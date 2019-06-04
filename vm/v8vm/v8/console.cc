@@ -1,10 +1,20 @@
 #include "console.h"
 #include <iostream>
 
-static consoleFunc CConsole = nullptr;
+static consoleLogFunc CConsole = nullptr;
+static sysLogFunc CSysLog = nullptr;
 
-void InitGoConsole(consoleFunc console) {
+void InitGoConsole(consoleLogFunc console, sysLogFunc syslog) {
     CConsole = console;
+    CSysLog = syslog;
+}
+
+void SysLog(SandboxPtr ptr, std::string level, std::string msg) {
+    CSysLog(
+        ptr,
+        {const_cast<char *>(level.c_str()), static_cast<int>(level.length())},
+        {const_cast<char *>(msg.c_str()), static_cast<int>(msg.length())}
+    );
 }
 
 void NewConsoleLog(const FunctionCallbackInfo<Value> &args) {

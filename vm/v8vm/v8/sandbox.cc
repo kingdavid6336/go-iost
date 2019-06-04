@@ -367,8 +367,7 @@ ValueTuple Execution(SandboxPtr ptr, const CStr code, long long int expireTime) 
     Sandbox *sbx = static_cast<Sandbox*>(ptr);
     Isolate *isolate = sbx->isolate;
 
-    std::string dcode = std::string(code.data+1, code.size > 101 ? 100 : code.size-1);
-    std::cout << "[CC MAIN] Execute: " << dcode << std::endl;
+    SysLog(ptr, "Info", "[CC MAIN] execution start");
 
     std::string result;
     std::string error;
@@ -407,6 +406,7 @@ ValueTuple Execution(SandboxPtr ptr, const CStr code, long long int expireTime) 
         } */
         if (sbx->gasUsed > sbx->gasLimit) {
             isolate->TerminateExecution();
+            SysLog(ptr, "Error", "out of gas");
             copyString(res.Err, "out of gas");
             res.gasUsed = sbx->gasUsed;
             break;
@@ -415,6 +415,7 @@ ValueTuple Execution(SandboxPtr ptr, const CStr code, long long int expireTime) 
         //auto execTime = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime).count();
         if (now > expireTime) {
             isolate->TerminateExecution();
+            SysLog(ptr, "Error", "execution killed");
             copyString(res.Err, ("execution killed, current time : " + std::to_string(now) + " , expireTime: " + std::to_string(expireTime)).c_str());
             res.gasUsed = sbx->gasUsed;
             break;
@@ -423,15 +424,18 @@ ValueTuple Execution(SandboxPtr ptr, const CStr code, long long int expireTime) 
         std::this_thread::sleep_for(std::chrono::microseconds(10));
         count++;
         if (count > 100000) {
-            std::cout << "[CC MAIN] Too much loop: expireTime = " << expireTime << "; now = " << now << std::endl;
+            std::stringstream ss;
+            ss << "[CC MAIN] Too much loop: expireTime = " << expireTime << "; now = " << now;
+            SysLog(ptr, "Error", ss.str());
+            std::cout <<  std::endl;
             break;
         }
     }
     if (exec.joinable()) {
-        std::cout << "[CC MAIN] waiting RealExecute" << std::endl;
+        SysLog(ptr, "Info", "[CC MAIN] waiting RealExecute");
         exec.join();
-        std::cout << "[CC MAIN] RealExecute finished" << std::endl;
     }
+    SysLog(ptr, "Info", "[CC MAIN] RealExecute finished");
     //std::cout << " MemoryUsed: " << MemoryUsage(isolate, sbx->allocator) - startMemHHH << std::endl;
     return res;
 }

@@ -51,8 +51,9 @@ extern void setSandboxGasLimit(SandboxPtr ptr, size_t gasLimit);
 extern void setSandboxMemLimit(SandboxPtr ptr, size_t memLimit);
 
 // log
-typedef char* (*consoleFunc)(SandboxPtr, const CStr, const CStr);
-void InitGoConsole(consoleFunc);
+typedef char* (*consoleLogFunc)(SandboxPtr, const CStr, const CStr);
+typedef char* (*sysLogFunc)(SandboxPtr, const CStr, const CStr);
+void InitGoConsole(consoleLogFunc, sysLogFunc);
 
 // require
 typedef char *(*requireFunc)(SandboxPtr, const CStr);

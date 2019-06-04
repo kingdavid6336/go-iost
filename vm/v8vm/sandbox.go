@@ -32,6 +32,7 @@ char* goGlobalMapKeys(SandboxPtr, const CStr,  const CStr, const CStr, CStr *, s
 char* goGlobalMapLen(SandboxPtr, const CStr, const CStr, const CStr, size_t *, size_t *);
 
 char* goConsoleLog(SandboxPtr, const CStr, const CStr);
+char* goSysLog(SandboxPtr, const CStr, const CStr);
 
 CStr goSha3(SandboxPtr, const CStr, size_t *);
 int goVerify(SandboxPtr, const CStr, const CStr, const CStr, const CStr, size_t *);
@@ -109,7 +110,10 @@ func (sbx *Sandbox) Release() {
 // Init add system functions
 func (sbx *Sandbox) Init(vmType vmPoolType) {
 	// init require
-	C.InitGoConsole((C.consoleFunc)(C.goConsoleLog))
+	C.InitGoConsole(
+		(C.consoleLogFunc)(C.goConsoleLog),
+		(C.sysLogFunc)(C.goSysLog),
+	)
 	C.InitGoBlockchain(
 		(C.rulesFunc)(C.goRules),
 		(C.blockInfoFunc)(C.goBlockInfo),

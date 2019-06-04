@@ -41,6 +41,7 @@ typedef struct {
 } Sandbox;
 
 extern ValueTuple Execution(SandboxPtr ptr, const CStr code, long long int expireTime);
+extern void SysLog(SandboxPtr, std::string, std::string);
 
 size_t MemoryUsage(Isolate* isolate, ArrayBufferAllocator* allocator);
 
