@@ -30,7 +30,7 @@ all: build
 build: iserver iwallet itest
 
 iserver:
-	$(GO) build -ldflags "$(LD_FLAGS)" -o $(TARGET_DIR)/iserver $(PROJECT)/cmd/iserver
+	$(GO) build -race -ldflags "$(LD_FLAGS)" -o $(TARGET_DIR)/iserver $(PROJECT)/cmd/iserver
 
 iwallet:
 	$(GO) build -o $(TARGET_DIR)/iwallet $(PROJECT)/cmd/iwallet
