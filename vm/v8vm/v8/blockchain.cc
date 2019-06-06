@@ -27,8 +27,9 @@ void InitGoBlockchain(rulesFunc rules, blockInfoFunc blkInfo,
 }
 
 char* IOSTBlockchain::Rules(CStr *result) {
+    SysLog(sbxPtr, "Info", "[CC RUNTIME] get rules start");
     char* ret = CRules(sbxPtr, result);
-    SysLog(sbxPtr, "Info", "[CC RUNTIME] get rules");
+    SysLog(sbxPtr, "Info", "[CC RUNTIME] get rules end");
     return ret;
 }
 

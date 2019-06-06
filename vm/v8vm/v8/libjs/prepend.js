@@ -20,7 +20,9 @@ const tx = {
 };
 
 (function(){
+    console.log("[JS RUNTIME] new IOSTBlockchain start");
     let bc = new IOSTBlockchain;
+    console.log("[JS RUNTIME] new IOSTBlockchain end");
     let rules = bc.rules();
 
     if (rules.is_fork3_2_0) {

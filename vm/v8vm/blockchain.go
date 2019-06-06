@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/iost-official/go-iost/ilog"
 	"github.com/iost-official/go-iost/vm/host"
 )
 
@@ -35,16 +36,23 @@ func (cstr C.CStr) GoString() string {
 
 //export goRules
 func goRules(cSbx C.SandboxPtr, rules *C.CStr) *C.char {
+	ilog.Infof("[GO RUNTIME] get rules: GetSandbox start")
 	sbx, ok := GetSandbox(cSbx)
+	ilog.Infof("[GO RUNTIME] get rules: GetSandbox end")
 	if !ok {
+		ilog.Errorf("[GO RUNTIME] get rules: GetSandbox failed")
 		return C.CString(ErrGetSandbox.Error())
 	}
 
+	ilog.Infof("[GO RUNTIME] get rules: json.Marshal start")
 	res, err := json.Marshal(sbx.host.Rules)
+	ilog.Infof("[GO RUNTIME] get rules: json.Marshal end")
 	if err != nil {
+		ilog.Errorf("[GO RUNTIME] get rules: json.Marshal failed")
 		return C.CString(err.Error())
 	}
 	rules.SetString(string(res))
+	ilog.Infof("[GO RUNTIME] get rules: end")
 
 	return nil
 }
