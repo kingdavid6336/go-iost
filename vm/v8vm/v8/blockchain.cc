@@ -26,6 +26,11 @@ void InitGoBlockchain(rulesFunc rules, blockInfoFunc blkInfo,
 	CEvent = event;
 }
 
+char* IOSTBlockchain::Log(std::string msg) {
+    SysLog(sbxPtr, "Info", "[CC RUNTIME]" + msg);
+    return nullptr;
+}
+
 char* IOSTBlockchain::Rules(CStr *result) {
     SysLog(sbxPtr, "Info", "[CC RUNTIME] get rules start");
     char* ret = CRules(sbxPtr, result);
@@ -147,6 +152,7 @@ void IOSTBlockchain_rules(const FunctionCallbackInfo<Value> &args) {
 
     char *ret = bc->Rules(&resultStr);
     if (ret != nullptr) {
+        bc->Log("get rules failed in c");
         Local<Value> err = Exception::Error(
             String::NewFromUtf8(isolate, ret)
         );
@@ -154,8 +160,11 @@ void IOSTBlockchain_rules(const FunctionCallbackInfo<Value> &args) {
         free(ret);
         return;
     }
+    bc->Log("get rules parse start");
     Local<Value> obj = JSON::Parse(isolate, String::NewFromUtf8(isolate, resultStr.data, String::kNormalString, resultStr.size)).ToLocalChecked();
+    bc->Log("get rules parse end");
     args.GetReturnValue().Set(obj);
+    bc->Log("get rules parse return");
     if (resultStr.data != nullptr) free(resultStr.data);
 }
 

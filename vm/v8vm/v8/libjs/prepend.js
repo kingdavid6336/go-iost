@@ -24,7 +24,7 @@ const tx = {
     let bc = new IOSTBlockchain;
     console.log("[JS RUNTIME] new IOSTBlockchain end");
     let rules = bc.rules();
-
+    console.log("[JS RUNTIME] get rules end");
     if (rules.is_fork3_2_0) {
         blockchain.caller = function() {
             return JSON.parse(blockchain.contextInfo()).caller;
@@ -34,4 +34,5 @@ const tx = {
     }
 
     IOSTBlockchain = null;
+    console.log("[JS RUNTIME] prepend end");
 })();
