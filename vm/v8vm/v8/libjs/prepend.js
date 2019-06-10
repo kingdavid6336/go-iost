@@ -1,3 +1,4 @@
+console.log("[JS RUNTIME] prepend start");
 // load Block
 const blockInfo = JSON.parse(blockchain.blockInfo());
 const block = {

@@ -287,13 +287,17 @@ void RealExecute(SandboxPtr ptr, const CStr code, std::string &result, std::stri
     TryCatch tryCatch(isolate);
     tryCatch.SetVerbose(false);
 
+    SysLog(ptr, "Info", "[CC REAL] RealExecute start");
     // preload block info.
     Local<String> source = String::NewFromUtf8(isolate, prependJsLib, NewStringType::kNormal).ToLocalChecked();
     Local<String> fileName = String::NewFromUtf8(isolate, "_preload_block.js", NewStringType::kNormal).ToLocalChecked();
     Local<Script> script = Script::Compile(source, fileName);
 
+    SysLog(ptr, "Info", "[CC REAL] preload start");
     Local<Value> ret = script->Run();
+    SysLog(ptr, "Info", "[CC REAL] preload end");
     if (tryCatch.HasCaught()) {
+        SysLog(ptr, "Error", "[CC REAL] preload failed");
         std::string exception = reportException(isolate, context, tryCatch);
         error = exception;
         return;
@@ -307,14 +311,17 @@ void RealExecute(SandboxPtr ptr, const CStr code, std::string &result, std::stri
     script = Script::Compile(source, fileName);
 
     if (script.IsEmpty()) {
+        SysLog(ptr, "Error", "[CC REAL] compile failed");
         std::string exception = reportException(isolate, context, tryCatch);
         error = exception;
         return;
     }
 
     ret = script->Run();
+    SysLog(ptr, "Info", "[CC REAL] run end");
 
     if (tryCatch.HasCaught()) {
+        SysLog(ptr, "Error", "[CC REAL] run failed");
         std::string exception = reportException(isolate, context, tryCatch);
         error = exception;
         return;
@@ -323,12 +330,14 @@ void RealExecute(SandboxPtr ptr, const CStr code, std::string &result, std::stri
     if (ret->IsString()) {
         Local<String> str =  Local<String>::Cast(ret);
         if (str->Length() > resultMaxLength) {
+            SysLog(ptr, "Error", "[CC REAL] string ret failed");
             error = "result too long";
             return;
         }
     }
 
     if (ret->IsString() || ret->IsNumber() || ret->IsBoolean()) {
+        SysLog(ptr, "Info", "[CC REAL] string ret");
         String::Utf8Value retV8Str(isolate, ret);
         result.assign(*retV8Str, retV8Str.length());
         isDone = true;
@@ -337,6 +346,7 @@ void RealExecute(SandboxPtr ptr, const CStr code, std::string &result, std::stri
 
     Local<Object> obj = ret.As<Object>();
     if (!obj->IsUndefined()) {
+        SysLog(ptr, "Info", "[CC REAL] obj ret");
         MaybeLocal<String> jsonRet = JSON::Stringify(context, obj);
 
         if (tryCatch.HasCaught()) {
