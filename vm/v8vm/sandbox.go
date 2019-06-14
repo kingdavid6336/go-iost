@@ -243,15 +243,20 @@ ret;
 	}
 
 	return fmt.Sprintf(`
+console.log("[JS RUNTIME] run start");
 %s;
+console.log("[JS RUNTIME] load contract");
 const obj = new module.exports;
+console.log("[JS RUNTIME] new contract");
 
 // run contract with specified function and args
 let rs = obj.%s(%s);
+console.log("[JS RUNTIME] run contract");
 if ((typeof rs === 'function') || (typeof rs === 'object')) {
 	_IOSTInstruction_counter.incr(12);
 	rs = JSON.stringify(rs);
 }
+console.log("[JS RUNTIME] run end");
 rs;
 `, code, function, argStr), nil
 }

@@ -317,6 +317,7 @@ void RealExecute(SandboxPtr ptr, const CStr code, std::string &result, std::stri
         return;
     }
 
+    SysLog(ptr, "Info", "[CC REAL] run start");
     ret = script->Run();
     SysLog(ptr, "Info", "[CC REAL] run end");
 
