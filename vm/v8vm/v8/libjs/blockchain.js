@@ -1,6 +1,8 @@
 let BlockChain = (function () {
     let bc = new IOSTBlockchain;
     let storage = new IOSTStorage;
+
+    IOSTBlockchain.instance = bc;    
     // get contractName
     let contractName = function () {
         let ctxInfo = JSON.parse(bc.contextInfo());
