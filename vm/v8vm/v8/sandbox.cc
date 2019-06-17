@@ -290,7 +290,9 @@ void RealExecute(SandboxPtr ptr, const CStr code, std::string &result, std::stri
     SysLog(ptr, "Info", "[CC REAL] RealExecute start");
     // preload block info.
     Local<String> source = String::NewFromUtf8(isolate, prependJsLib, NewStringType::kNormal).ToLocalChecked();
+    SysLog(ptr, "Info", "[CC REAL] RealExecute start 1");
     Local<String> fileName = String::NewFromUtf8(isolate, "_preload_block.js", NewStringType::kNormal).ToLocalChecked();
+    SysLog(ptr, "Info", "[CC REAL] RealExecute start 2");
     Local<Script> script = Script::Compile(source, fileName);
 
     SysLog(ptr, "Info", "[CC REAL] preload start");
