@@ -28,7 +28,7 @@ var (
 		Block3_0_10: 10599000,
 		Block3_1_0:  12800000,
 		Block3_3_0:  30440000,
-		Block3_3_1:  40000000,
+		Block3_3_1:  43600000,
 	}
 
 	defaultChainConf = &ChainConfig{
